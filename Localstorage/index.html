@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+	<style type="text/css">
+		input{
+			width: 300px;
+			height: 17px;
+
+		}
+	</style>
+</head>
+<body style="background-color: #96b8c1;">
+
+
+	<div id="signup" style="margin-left: 500px;margin-top: 100px;width: 300px;">
+            
+		<form>
+            <p style="font-size: 25pt;text-align: center;">Sing up</p>
+			<label>Name</label><br>
+			<input id="name" type="text" name=""><br><br>
+			<label>Lastname</label><br>
+			<input id="lastname" type="text" name=""><br><br>
+			<label>Username</label><br>
+			<input id="username" type="text" name=""><br><br>
+			<label>Password</label><br>
+			<input id="pass" type="password" name=""><br><br>
+			<label>Again password</label><br>
+			<input id="confirm_pass" type="password" name=""><br>
+			<p id="errorText" style="display: none; color: #ff5252;margin-left: 50px;"></p>
+			<button id="signup_btn" type="submit" style="margin-left: 100px;width: 100px;height: 26px;margin-top: 20px;">Submit</button>
+			
+		</form>
+
+	</div>
+	<div id="login" style="display: none;margin-left: 500px;margin-top: 100px;width: 300px;">
+
+		<form>
+             <p style="font-size: 25pt;text-align: center;">Sing in</p>
+			<label>Username</label><br>
+			<input id="login_username" type="text" name=""><br><br>
+			<label>Password</label><br>
+			<input id="login_pass" type="password" name=""><br><br>
+            <p id="login_Erorrtext" style="display: none; color: #ff5252;"></p>
+	        <button id="login_btn"  style="margin-left: 100px;width: 100px;height: 26px;margin-top: 20px;">Sing in</button>
+			
+		</form>
+	</div>
+	<div id="myData" style="display: none;margin-left: 500px;margin-top: 100px;width: 300px;height: 400px;border: 2px solid black">
+		
+	</div>
+	
+	<script type="text/javascript">
+
+		function Register() {
+			let doc = document,
+				signup = doc.getElementById("signup"),
+				login = doc.getElementById('login'),
+				signup_btn = doc.getElementById('signup_btn'),
+				login_btn = doc.getElementById('login_btn');
+
+			if (localStorage.getItem("data")) {
+				signup.style.display = "none";
+				login.style.display = "block";
+			}
+
+			signup_btn.onclick = () => {
+				event.preventDefault();
+				let signupName = doc.getElementById('name'),
+					signupLastname = doc.getElementById('lastname'),
+					signupUsername = doc.getElementById('username'),
+					signupPass = doc.getElementById('pass'),
+					signupConfirm_pass = doc.getElementById('confirm_pass'),
+					signupErrorText = doc.getElementById('errorText');
+
+					if (!signupName.value.trim() || !signupLastname.value.trim() || !signupUsername.value.trim() || !signupPass.value.trim() || !signupConfirm_pass.value.trim()) {
+						signupErrorText.style.display = "block";
+						signupErrorText.textContent = "Barcha maydonni to'ldiring!";
+						return;
+					}
+					if (signupPass.value.trim() !== signupConfirm_pass.value.trim()) {
+						signupErrorText.style.display = "block";
+						signupErrorText.textContent = "Qayta kiritilgan parol xato";
+						return;
+					}
+					signup.style.display = "none";
+					login.style.display = "block";
+					const myData = {
+						'name' : signupName.value,
+						'lastname' : signupLastname.value,
+						'username' : signupUsername.value,
+						'pass' : signupPass.value,
+						inn : function () {
+							let innDiv = document.getElementById('myData');
+							innDiv.innerHTML = `${this.name} ${this.lastname} ${this.username} ${this.pass}`;
+						}
+					}
+					localStorage.setItem("data", JSON.stringify(myData));
+					login_btn.onclick = () => {
+						event.preventDefault();
+						let login_username = doc.getElementById("login_username"),
+							login_pass = doc.getElementById("login_pass"),
+							login_Erorrtext = doc.getElementById("login_Erorrtext");
+						if (!login_username.value.trim() || !login_pass.value.trim()) {
+							login_Erorrtext.textContent = "Barcha maydonni to'ldiring!";
+							return;
+						}
+						let localData = JSON.parse(localStorage.getItem("data"));
+						if (localData) {
+							if (localData.username == login_username.value.trim() && localData.pass == login_pass.value.trim()) {
+								login.style.display = "none";
+								document.getElementById('myData').style.display = "block";
+								document.getElementById('myData').innerHTML = `${localData.name} ${localData.lastname} ${localData.username} ${localData.pass}`;
+										return;
+							}else{
+								login_Erorrtext.style.display = "block";
+								login_Erorrtext.textContent = "Login yoki porol xato!";
+							}
+						}
+					}
+					
+					myData.inn();
+			}
+
+			login_btn.onclick = () => {
+				event.preventDefault();
+				let login_username = doc.getElementById("login_username"),
+					login_pass = doc.getElementById("login_pass"),
+					login_Erorrtext = doc.getElementById("login_Erorrtext");
+				if (!login_username.value.trim() || !login_pass.value.trim()) {
+					login_Erorrtext.textContent = "Barcha maydonni to'ldiring!";
+					return;
+				}
+                
+				let localData = JSON.parse(localStorage.getItem("data"));
+				if (localData) {
+					if (localData.username == login_username.value.trim() && localData.pass == login_pass.value.trim()) {
+						login.style.display = "none";
+						document.getElementById('myData').style.display = "block";
+						document.getElementById('myData').innerHTML = `<p style="font-size:25pt;text-align:center;">User information</p>
+						<p style="font-size:20pt;">Name:${localData.name}</p> <p style="font-size:20pt;">Lastname:${localData.lastname}</p> <p style="font-size:20pt;">Username:${localData.username}</p> <p style="font-size:20pt;">Password:${localData.pass}</p><button onclick="saa()" style="">Log Out</button>`;
+								return;
+					}else{
+						doc.getElementById("login_Erorrtext").style.display = "block";
+						doc.getElementById("login_Erorrtext").textContent = "Login yoki porol xato!";
+					}
+				
+
+				}
+			}
+			
+		}
+		Register();
+	</script>
+</body>
+
+</html>
